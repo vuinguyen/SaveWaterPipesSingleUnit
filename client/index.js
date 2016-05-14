@@ -31,12 +31,6 @@ socket.on('toogle led', function(msg) {
 
 
 // Vui's function BEGINS
-/*
-socket.on('voltage value', function(msg) {
-    //$('#messages-voltage').prepend($('<li>Vui - Toogle LED: ON<span> - '+msg.userId+'</span></li>')); // VN
-    $('#messages-voltage').prepend($('<li><span>' + msg.voltageValue + '</span></li>')); // VN
-};
-*/
 socket.on('voltage value', function(msg) {
     $('#messages-voltage').prepend($('<li><span> - '+msg+'</span></li>'));
 });

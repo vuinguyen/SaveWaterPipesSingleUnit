@@ -32,21 +32,14 @@ myOnboardLed.dir(mraa.DIR_OUT); //set the gpio direction to output
 var ledState = true; //Boolean to hold the state of Led
 
 
-var upm_grove = require('jsupm_grove'); // VN
-
+// potentiometer hooked up here // VN
+var upm_grove = require('jsupm_grove'); 
 //setup access analog input Analog pin #1 (A1)
 var groveSlide = new upm_grove.GroveSlide(1);   // pin 1    // VN
-
-//var raw = groveSlide.raw_value();
-//var volts = groveSlide.voltage_value();
 
 var raw = 0;
 var volts = 0;
 var thresholdValue = 0.5;
-
-
-//voltageLoop();
-
 
 function voltageLoop()
 {
@@ -55,15 +48,13 @@ function voltageLoop()
 
     if (Math.abs(currentVolts - volts) > thresholdValue)
     {
-        //write the slider values to the console
-        //console.log("Slider Value: " + raw + " = " + volts.toFixed(2) + " V");
         raw = currentRaw;
         volts = currentVolts;
         
-        // print stuff
-        //write the slider values to the console
+        //write the slider/potentiometer value to the console
         var voltageValue = "Slider Value: " + raw + " = " + volts.toFixed(2) + " V";
         console.log(voltageValue);
+        // and send the value to the webpage
         io.emit('voltage value', voltageValue);
     }
     
@@ -110,15 +101,8 @@ io.on('connection', function(socket) {
     
     
     // Vui code BEGINS
-    //write the slider values to the console
-    //var voltageValue = "Slider Value: " + raw + " = " + volts.toFixed(2) + " V";
-    //msg.value = volts.toFixed(2);
-    //console.log(voltageValue);
-    //io.emit('voltage value', voltageValue);
-    
+    // this is where we check the potentiometer value
     voltageLoop();
-    // send to the webpage via websocket
-    
     // Vui code ENDS
     
     socket.on('user disconnect', function(msg) {

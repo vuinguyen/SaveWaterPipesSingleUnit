@@ -1,4 +1,4 @@
 *.xdke
 node_modules/
 node_modules_old/
-
+.DS_STORE

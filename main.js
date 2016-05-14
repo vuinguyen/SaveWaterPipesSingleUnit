@@ -31,6 +31,48 @@ var myOnboardLed = new mraa.Gpio(13); //LED hooked up to digital pin 13 (or buil
 myOnboardLed.dir(mraa.DIR_OUT); //set the gpio direction to output
 var ledState = true; //Boolean to hold the state of Led
 
+
+var upm_grove = require('jsupm_grove'); // VN
+
+//setup access analog input Analog pin #1 (A1)
+var groveSlide = new upm_grove.GroveSlide(1);   // pin 1    // VN
+
+//var raw = groveSlide.raw_value();
+//var volts = groveSlide.voltage_value();
+
+var raw = 0;
+var volts = 0;
+var thresholdValue = 0.5;
+
+
+//voltageLoop();
+
+
+function voltageLoop()
+{
+    currentRaw = groveSlide.raw_value();
+    currentVolts = groveSlide.voltage_value();
+
+    if (Math.abs(currentVolts - volts) > thresholdValue)
+    {
+        //write the slider values to the console
+        //console.log("Slider Value: " + raw + " = " + volts.toFixed(2) + " V");
+        raw = currentRaw;
+        volts = currentVolts;
+        
+        // print stuff
+        //write the slider values to the console
+        var voltageValue = "Slider Value: " + raw + " = " + volts.toFixed(2) + " V";
+        console.log(voltageValue);
+        io.emit('voltage value', voltageValue);
+    }
+    
+    //wait 5s then call function again
+    setTimeout(voltageLoop, 5000);
+}
+
+
+
 var express = require('express');
 var app = express();
 var path = require('path');
@@ -65,6 +107,19 @@ io.on('connection', function(socket) {
     console.log('Number of Users Connected ' + connectedUsersArray.length);
     console.log('User(s) Connected: ' + connectedUsersArray);
     io.emit('connected users', connectedUsersArray);
+    
+    
+    // Vui code BEGINS
+    //write the slider values to the console
+    //var voltageValue = "Slider Value: " + raw + " = " + volts.toFixed(2) + " V";
+    //msg.value = volts.toFixed(2);
+    //console.log(voltageValue);
+    //io.emit('voltage value', voltageValue);
+    
+    voltageLoop();
+    // send to the webpage via websocket
+    
+    // Vui code ENDS
     
     socket.on('user disconnect', function(msg) {
         console.log('remove: ' + msg);

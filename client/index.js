@@ -15,17 +15,33 @@ $("#led-link").on('click', function(e){
 socket.on('toogle led', function(msg) {
     if(msg.value === false) {
         $('#messages').prepend($('<li>Toogle LED: OFF<span> - '+msg.userId+'</span></li>'));
+        //$('#messages-voltage').prepend($('<li>Vui - Toogle LED: OFF<span> - '+msg.userId+'</span></li>')); // VN
         $("#led-container").removeClass("on");
         $("#led-container").addClass("off");
         $("#led-container span").text("OFF");
     }
     else if(msg.value === true) {
         $('#messages').prepend($('<li>Toogle LED: ON<span> - '+msg.userId+'</span></li>'));
+        
         $("#led-container").removeClass("off");
         $("#led-container").addClass("on");
         $("#led-container span").text("ON");
     }
 });
+
+
+// Vui's function BEGINS
+/*
+socket.on('voltage value', function(msg) {
+    //$('#messages-voltage').prepend($('<li>Vui - Toogle LED: ON<span> - '+msg.userId+'</span></li>')); // VN
+    $('#messages-voltage').prepend($('<li><span>' + msg.voltageValue + '</span></li>')); // VN
+};
+*/
+socket.on('voltage value', function(msg) {
+    $('#messages-voltage').prepend($('<li><span> - '+msg+'</span></li>'));
+});
+// Vui's function ENDS
+
 
 socket.on('chat message', function(msg) {
     $('#messages').prepend($('<li>'+msg.value+'<span> - '+msg.userId+'</span></li>'));

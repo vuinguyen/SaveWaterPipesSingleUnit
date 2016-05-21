@@ -37,6 +37,13 @@ socket.on('voltage value', function(msg) {
 // Vui's function ENDS
 
 
+// Vui's function BEGINS
+$("#override").on('click', function(e){
+    socket.emit('toogle led', {value: 0, userId: userId});
+});
+
+// Vui's function ENDS
+
 socket.on('chat message', function(msg) {
     $('#messages').prepend($('<li>'+msg.value+'<span> - '+msg.userId+'</span></li>'));
 });

@@ -1,0 +1,52 @@
+body {
+	font-family: Verdana, sans-serif; 
+	font-size:0.8em;
+}
+
+header, section, footer, aside, nav, main, article, figure, article {
+    display: block;
+}
+
+#container{
+	width: 100%;
+	display: block;
+}
+
+/* currently not working in FF */
+@import url("temperature-styles.css");
+@import url("faucet-styles.css");
+	
+
+/* Added stuff from index.css to make it work with old template code */
+.log-title {
+    color: red;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.log-container {
+    height: 10em;
+    overflow-y: scroll;
+}
+
+#messages {
+    list-style-type: none;
+    margin: 0;
+    padding: 0
+}
+
+#messages li {
+    padding: 5px 10px
+}
+
+#messages li:nth-child(odd) {
+    background: rgba(17,94,162, 0.1);
+}
+
+#messages li span {
+    color: gray;
+    font-style: italic;
+}
+
+
+

@@ -1,0 +1,54 @@
+#TemperatureDetail{
+	float: left;
+	width: 40%;
+}
+
+ul {
+	margin:10px; 
+	padding:5px;
+	list-style-type: none;
+}
+
+ul li {
+	margin:5px;
+	text-decoration: bold;
+}
+
+ul li.good {
+	color: green;
+}
+
+ul li.error, ul li.danger {
+	color: red;	
+}
+
+ul li.warning {
+	color: orange;
+}
+
+div#legend-key{
+    width: 20%;
+	margin: 2px, 5px;
+    padding: 5px;
+    border: 2px solid black;
+	
+}
+
+div#legend-key .legend-title{
+	text-align: center;
+}
+
+div#legend-key div.legend-good-box{
+    border: 5px solid green;
+	width: 5px;
+}
+
+div#legend-key div.legend-warning-box{
+    border: 5px solid orange;
+	width: 5px;
+}
+
+div#legend-key div.legend-danger-box{
+    border: 5px solid red;
+	width: 5px;
+}

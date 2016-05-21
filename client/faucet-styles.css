@@ -1,0 +1,18 @@
+#FaucetDetail{
+	float: right;
+	width: 60%;
+	display: block;
+}
+
+h2.faucet-status{
+	text-decoration: bold;
+}
+
+#override{
+	text-decoration: bold;
+}
+
+article{
+	display: inline;
+}
+

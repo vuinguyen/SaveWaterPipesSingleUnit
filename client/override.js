@@ -1,4 +1,10 @@
+		// //Get Current Date and Time
 $(document).ready(function(){
+	// var now = moment().format("dddd, MMMM Do, YYYY");
+	// $("#currentDate").text(now);
+	// alert(now);
+	
+	
 	$("#override").click(function() {
 	  
 	  //Check faucetStatus
@@ -16,5 +22,4 @@ $(document).ready(function(){
 	  }
 	  
 	});
-
 });

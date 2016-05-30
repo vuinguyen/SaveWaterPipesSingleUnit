@@ -1,6 +1,18 @@
+html{
+	height: 100%;
+	/* display: block; */
+/* 	background-color: #2EFEF7; */
+	background: linear-gradient(#DAECF7, #A9DBFA, #3497D4, #07466E);
+	background: url("faucet_background_test.png") no-repeat;
+	background-size: 100%;
+}
+
 body {
-	font-family: Verdana, sans-serif; 
+	font-family: verdana, sans-serif; 
 	font-size:0.8em;
+	color: #113952; 
+
+
 }
 
 header, section, footer, aside, nav, main, article, figure, article {
@@ -12,41 +24,13 @@ header, section, footer, aside, nav, main, article, figure, article {
 	display: block;
 }
 
+a {
+	color: #9DD3F5; 
+}
+
+
 /* currently not working in FF */
 @import url("temperature-styles.css");
 @import url("faucet-styles.css");
 	
-
-/* Added stuff from index.css to make it work with old template code */
-.log-title {
-    color: red;
-    font-size: 1.5em;
-    font-weight: bold;
-}
-
-.log-container {
-    height: 10em;
-    overflow-y: scroll;
-}
-
-#messages {
-    list-style-type: none;
-    margin: 0;
-    padding: 0
-}
-
-#messages li {
-    padding: 5px 10px
-}
-
-#messages li:nth-child(odd) {
-    background: rgba(17,94,162, 0.1);
-}
-
-#messages li span {
-    color: gray;
-    font-style: italic;
-}
-
-
 

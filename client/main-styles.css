@@ -3,7 +3,7 @@ html{
 	/* display: block; */
 /* 	background-color: #2EFEF7; */
 	background: linear-gradient(#DAECF7, #A9DBFA, #3497D4, #07466E);
-	background: url("faucet_background_test.png") no-repeat;
+	background: url("faucet_background.png") no-repeat;   /* VN: correct this */
 	background-size: 100%;
 }
 

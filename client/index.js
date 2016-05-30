@@ -8,10 +8,13 @@ $('form').submit(function() {
     return false;
 });
 
+// This will be OBE: BEGIN
 $("#led-link").on('click', function(e){
     socket.emit('toogle led', {value: 0, userId: userId});
 });
+// This will be OBE: END
 
+// This will be OBE: BEGIN
 socket.on('toogle led', function(msg) {
     if(msg.value === false) {
         $('#messages').prepend($('<li>Toogle LED: OFF<span> - '+msg.userId+'</span></li>'));
@@ -28,11 +31,29 @@ socket.on('toogle led', function(msg) {
         $("#led-container span").text("ON");
     }
 });
+// This will be OBE: END
 
 
 // Vui's function BEGINS
-socket.on('voltage value', function(msg) {
-    $('#messages-voltage').prepend($('<li><span> - '+msg+'</span></li>'));
+socket.on('temp value', function(msg) {
+    if (msg.severity == 1)
+        {
+            
+    $('#messages-temp').prepend($('<li class="good"><span>Temp '+msg.temp+'&nbspF,&nbspSeverity:'+'Good'+'</span></li>'));
+        }
+    else if (msg.severity == 2)
+        {
+           $('#messages-temp').prepend($('<li class="warning"><span>Temp '+msg.temp+'&nbspF,&nbspSeverity:'+'Warning'+'</span></li>')); 
+        }
+    else if (msg.severity == 3)
+        {
+            $('#messages-temp').prepend($('<li class="danger"><span>Temp '+msg.temp+'&nbspF,&nbspSeverity:'+'Danger'+'</span></li>'));
+        }
+    else // we're offline and in trouble
+        {
+           $('#messages-temp').append($('<li class="error"><span>'+'***WARNING: SENSOR OFFLINE ***'+'</span></li>')); 
+            
+        }
 });
 // Vui's function ENDS
 

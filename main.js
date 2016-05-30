@@ -39,32 +39,65 @@ var upm_grove = require('jsupm_grove');
 //setup access analog input Analog pin #1 (A1)
 var groveSlide = new upm_grove.GroveSlide(1);   // pin 1    // VN
 
-var raw = 0;
+var rawSlider = 0;
 var volts = 0;
 var thresholdValue = 0.5;
+var ratio = 64/297;         // used to convert slider values to temp
+var constant = -107/4;      // used to convert slider values to temp
+var firstTemp = true;       // is this the first temperature reading?
 
-function voltageLoop()
+var criticalTemp = 40;
+var warningTemp = 55;
+
+function tempLoop()
 {
-    currentRaw = groveSlide.raw_value();
+    currentRawSlider = groveSlide.raw_value();
     currentVolts = groveSlide.voltage_value();
 
-    if (Math.abs(currentVolts - volts) > thresholdValue)
+    if ((firstTemp == true) || (Math.abs(currentVolts - volts) > thresholdValue))
     {
-        raw = currentRaw;
+        rawSlider = currentRawSlider;
         volts = currentVolts;
         
         //write the slider/potentiometer value to the console
-        var voltageValue = "Slider Value: " + raw + " = " + volts.toFixed(2) + " V";
-        console.log(voltageValue);
+        //var voltageValue = "Slider Value: " + rawSlider + " = " + volts.toFixed(2) + " V";
+        var temp = getTemp(rawSlider);
+        var severity = getSeverity(temp);
+        console.log(temp + " F" + ", Severity: " + severity);
+        //console.log(severity);
+        io.emit('temp value', {temp: temp, severity: severity});
+        //io.emit('temp value', {temp: temp});
+        //console.log(voltageValue);
         // and send the value to the webpage
-        io.emit('voltage value', voltageValue);
+        //io.emit('voltage value', voltageValue);
+        firstTemp = false;
     }
     
     //wait 5s then call function again
-    setTimeout(voltageLoop, 5000);
+    setTimeout(tempLoop, 5000);
 }
 
+function getTemp(rawSlider) 
+{
+    var temperature = (rawSlider * ratio) + constant; // convert slider to temperature
+    var temp2 = temperature.toPrecision(3);
+    return temp2;
+}
 
+function getSeverity(temp)
+{
+    var severity = 1;
+    if (temp <= warningTemp)
+    {
+        severity = 2;
+        if (temp <= criticalTemp)
+        {
+            severity = 3;
+        }
+    }
+    
+    return severity;
+}
 
 var express = require('express');
 var app = express();
@@ -103,8 +136,8 @@ io.on('connection', function(socket) {
     
     
     // Vui code BEGINS
-    // this is where we check the potentiometer value
-    voltageLoop();
+    // this is where we check the temperature value
+    tempLoop();
     // Vui code ENDS
     
     socket.on('user disconnect', function(msg) {

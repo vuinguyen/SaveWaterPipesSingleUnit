@@ -29,6 +29,17 @@ a {
 }
 
 
+.temp-container {
+   height: 10em;
+   overflow-y: scroll; 
+}
+
+.temp-title {
+    color: red;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
 /* currently not working in FF */
 @import url("temperature-styles.css");
 @import url("faucet-styles.css");

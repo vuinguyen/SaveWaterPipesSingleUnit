@@ -1,12 +1,15 @@
 var socket = io();
 var userId = "user";
 
-
+/*
+// This will be OBE: BEGIN
 $('form').submit(function() {
     socket.emit('chat message', {value: $('#m').val(), userId: userId});
     $('#m').val('');
     return false;
 });
+// This will be OBE: END
+*/
 
 // This will be OBE: BEGIN
 $("#led-link").on('click', function(e){
@@ -18,7 +21,6 @@ $("#led-link").on('click', function(e){
 socket.on('toogle led', function(msg) {
     if(msg.value === false) {
         $('#messages').prepend($('<li>Toogle LED: OFF<span> - '+msg.userId+'</span></li>'));
-        //$('#messages-voltage').prepend($('<li>Vui - Toogle LED: OFF<span> - '+msg.userId+'</span></li>')); // VN
         $("#led-container").removeClass("on");
         $("#led-container").addClass("off");
         $("#led-container span").text("OFF");
@@ -33,34 +35,49 @@ socket.on('toogle led', function(msg) {
 });
 // This will be OBE: END
 
+// Vui's function: BEGIN
+socket.on('toggle motor', function(msg) {
+    if(msg.value === false) {
+        //$('#messages').prepend($('<li>Toogle LED: OFF<span> - '+msg.userId+'</span></li>'));
+        //$("#led-container").removeClass("on");
+        //$("#led-container").addClass("off");
+        //$("#led-container span").text("OFF");
+    }
+    else if(msg.value === true) {
+        //$('#messages').prepend($('<li>Toogle LED: ON<span> - '+msg.userId+'</span></li>'));
+        //$("#led-container").removeClass("off");
+        //$("#led-container").addClass("on");
+        //$("#led-container span").text("ON");
+    }
+});
+// Vui's function: END
 
 // Vui's function BEGINS
 socket.on('temp value', function(msg) {
     if (msg.severity == 1)
-        {
-            
-    $('#messages-temp').prepend($('<li class="good"><span>Temp '+msg.temp+'&nbspF,&nbspSeverity:'+'Good'+'</span></li>'));
-        }
+    {
+            $('#messages-temp').prepend($('<li class="good"><span>Temp '+msg.temp+'&nbspF,&nbspCondition:'+'Good'+'</span></li>'));
+    }
     else if (msg.severity == 2)
-        {
-           $('#messages-temp').prepend($('<li class="warning"><span>Temp '+msg.temp+'&nbspF,&nbspSeverity:'+'Warning'+'</span></li>')); 
-        }
+    {
+           $('#messages-temp').prepend($('<li class="warning"><span>Temp '+msg.temp+'&nbspF,&nbspCondition:'+'Warning'+'</span></li>')); 
+    }
     else if (msg.severity == 3)
-        {
-            $('#messages-temp').prepend($('<li class="danger"><span>Temp '+msg.temp+'&nbspF,&nbspSeverity:'+'Danger'+'</span></li>'));
-        }
+    {
+            $('#messages-temp').prepend($('<li class="danger"><span>Temp '+msg.temp+'&nbspF,&nbspCondition:'+'Danger'+'</span></li>'));
+    }
     else // we're offline and in trouble
-        {
+    {
            $('#messages-temp').append($('<li class="error"><span>'+'***WARNING: SENSOR OFFLINE ***'+'</span></li>')); 
             
-        }
+    }
 });
 // Vui's function ENDS
 
 
 // Vui's function BEGINS
 $("#override").on('click', function(e){
-    socket.emit('toogle led', {value: 0, userId: userId});
+    socket.emit('toggle motor', {value: 0, userId: userId});
 });
 
 // Vui's function ENDS

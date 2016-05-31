@@ -16,12 +16,13 @@ body {
     color: white;
 }
 
-/* Will the following become OBE? */
+/* Will the following become OBE?: BEGIN */
 .log-title {
     color: red;
     font-size: 1.5em;
     font-weight: bold;
 }
+/* Will the following become OBE?: END */
 
 .temp-title {
     color: red;
@@ -97,13 +98,14 @@ body {
 }
 
 
-/* Will the following become OBE? */
+/* Will the following become OBE?: BEGIN */
 .log-container {
     height: 10em;
     overflow-y: scroll;
 }
+/* Will the following become OBE?: END */
 
-#temp-container {
+.temp-container {
    height: 10em;
    overflow-y: scroll; 
 }

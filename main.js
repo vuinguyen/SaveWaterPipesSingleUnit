@@ -31,7 +31,8 @@ console.log('MRAA Version: ' + mraa.getVersion()); //write the mraa version to t
 //var myOnboardLed = new mraa.Gpio(3, false, true); //LED hooked up to digital pin (or built in pin on Galileo Gen1)
 var myOnboardLed = new mraa.Gpio(13); //LED hooked up to digital pin 13 (or built in pin on Intel Galileo Gen2 as well as Intel Edison)
 myOnboardLed.dir(mraa.DIR_OUT); //set the gpio direction to output
-var ledState = true; //Boolean to hold the state of Led
+var ledState = true; //Boolean to hold the state of Led; this will be OBE soon
+var motorState = true; // Boolean to hold the state of motor
 
 
 // potentiometer hooked up here // VN
@@ -73,8 +74,8 @@ function tempLoop()
         firstTemp = false;
     }
     
-    //wait 5s then call function again
-    setTimeout(tempLoop, 5000);
+    //wait 3s then call function again
+    setTimeout(tempLoop, 3000);
 }
 
 function getTemp(rawSlider) 
@@ -151,13 +152,23 @@ io.on('connection', function(socket) {
         console.log('message: ' + msg.value);
     });
     
+    /* 
+    // This will become OBE soon: BEGIN
     socket.on('toogle led', function(msg) {
         myOnboardLed.write(ledState?1:0); //if ledState is true then write a '1' (high) otherwise write a '0' (low)
         msg.value = ledState;
         io.emit('toogle led', msg);
         ledState = !ledState; //invert the ledState
     });
+    // This will become OBE soon: END
+    */
     
+    socket.on('toggle motor', function(msg) {
+        myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
+        msg.value = motorState;
+        io.emit('toggle motor', msg);
+        motorState = !motorState; //invert the ledState
+    });
 });
 
 

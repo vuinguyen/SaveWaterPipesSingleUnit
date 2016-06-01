@@ -73,17 +73,26 @@ socket.on('toggle motor', function(msg) {
 
 // Vui's function BEGINS
 socket.on('temp value', function(msg) {
+    var now = new Date();
+	var time = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+    var firstPartMessage = '<span>Temp '+msg.temp+'&nbspF,&nbspCondition:';
+    var secondPartMessage = ', Time:'+time+'</span></li>';
     if (msg.severity == 1)
     {
-            $('#messages-temp').prepend($('<li class="good"><span>Temp '+msg.temp+'&nbspF,&nbspCondition:'+'Good'+'</span></li>'));
+        // Creating the string manually, below
+        //$('#messages-temp').prepend($('<li class="good"><span>Temp '+msg.temp+'&nbspF,&nbspCondition:'+'Good'+', Time:'+time+'</span></li>'));
+        $('#messages-temp').prepend($('<li class="good">'+firstPartMessage+'Good'+secondPartMessage));
     }
+    
     else if (msg.severity == 2)
     {
-           $('#messages-temp').prepend($('<li class="warning"><span>Temp '+msg.temp+'&nbspF,&nbspCondition:'+'Warning'+'</span></li>')); 
+           //$('#messages-temp').prepend($('<li class="warning"><span>Temp '+msg.temp+'&nbspF,&nbspCondition:'+'Warning'+', Time:'+time+'</span></li>')); 
+        $('#messages-temp').prepend($('<li class="warning">'+firstPartMessage+'Warning'+secondPartMessage));
     }
     else if (msg.severity == 3)
     {
-            $('#messages-temp').prepend($('<li class="danger"><span>Temp '+msg.temp+'&nbspF,&nbspCondition:'+'Danger'+'</span></li>'));
+            //$('#messages-temp').prepend($('<li class="danger"><span>Temp '+msg.temp+'&nbspF,&nbspCondition:'+'Danger'+', Time:'+time+'</span></li>'));
+        $('#messages-temp').prepend($('<li class="danger">'+firstPartMessage+'Danger'+secondPartMessage));
     }
     else // we're offline and in trouble
     {

@@ -1,15 +1,15 @@
 #TemperatureDetail{
 	float: left;
-	/* width: 40%; */
-    width: 35%
+	width: 40%; 
+    /* width: 35% */ /* This is my change: VN */
+    display: block;
 }
 
 ul {
 	padding:5px;
 	list-style-type: none;
-	background-color: #FFFFFF;
-	/*width: 50% */
-    width: 90%
+	background-color: #fafcfe;
+    width: 45%
 }
 
 ul li {
@@ -29,11 +29,17 @@ ul li.warning {
 	color: orange;
 }
 
+.display-previous{
+	text-decoration: underline;
+	color: #4e697a; 
+}
+
 div#legend-key{
     width: 20%;
 	padding: 5px;	
-    border: 2px solid black;
-	background-color: #FFFFFF;
+    border: 2px solid #bcc4ca;
+	background-color: #FBFDFE;
+	border-radius: 12px;
 }
 
 div#legend-key .legend-title{

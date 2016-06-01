@@ -9,24 +9,6 @@ $(document).ready(function(){
 	
 	$("#currentDate").text("Date : " + date);
 	
-	$("#override").click(function() {
-	  
-	  //Check faucetStatus
-	  var currentStatus = $("#status").text();
-	  
-	  if (currentStatus == "DRIPPING")
-	  {
-		$("#status").text("NOT DRIPPING");
-		$("#faucetStatus").attr("src","faucetOff.jpg");  
-	  }
-	  else
-	  {
-		$("#status").text("DRIPPING");
-		$("#faucetStatus").attr("src","faucetOn.jpg");  
-	  }
-	  
-	});
-	
 	//Unorder List for temperature. 
 	//Display top 10 and when you select the link, previous temperature, it displays the next 10.
 	$('ul li:gt(9)').hide();
@@ -77,16 +59,14 @@ socket.on('toogle led', function(msg) {
 // Vui's function: BEGIN
 socket.on('toggle motor', function(msg) {
     if(msg.value === false) {
-        //$('#messages').prepend($('<li>Toogle LED: OFF<span> - '+msg.userId+'</span></li>'));
-        //$("#led-container").removeClass("on");
-        //$("#led-container").addClass("off");
-        //$("#led-container span").text("OFF");
+        // turn faucet display to DRIPPING
+        $("#status").text("NOT DRIPPING");
+		$("#faucetStatus").attr("src","faucetOff.jpg"); 
     }
     else if(msg.value === true) {
-        //$('#messages').prepend($('<li>Toogle LED: ON<span> - '+msg.userId+'</span></li>'));
-        //$("#led-container").removeClass("off");
-        //$("#led-container").addClass("on");
-        //$("#led-container span").text("ON");
+        // turn faucet display to NOT DRIPPING
+        $("#status").text("DRIPPING");
+		$("#faucetStatus").attr("src","faucetOn.jpg"); 
     }
 });
 // Vui's function: END

@@ -1,0 +1,64 @@
+#TemperatureDetail{
+	float: left;
+	width: 40%; 
+    /* width: 35% */ /* This is my change: VN */
+    display: block;
+}
+
+ul {
+	padding:5px;
+	list-style-type: none;
+	background-color: #fafcfe;
+    width: 45%
+}
+
+ul li {
+	margin:5px;
+	text-decoration: bold;
+}
+
+ul li.good {
+	color: green;
+}
+
+ul li.error, ul li.danger {
+	color: red;	
+}
+
+ul li.warning {
+	color: orange;
+}
+
+.display-previous{
+	text-decoration: underline;
+	color: #4e697a; 
+}
+
+div#legend-key{
+    width: 20%;
+	padding: 5px;	
+    border: 2px solid #bcc4ca;
+	background-color: #FBFDFE;
+	border-radius: 12px;
+}
+
+div#legend-key .legend-title{
+	text-align: center;
+}
+
+div#legend-key  div{		
+	display: inline; 
+}
+
+div#legend-key div.legend-good-box{
+    border: 5px solid green;
+}
+
+div#legend-key div.legend-warning-box{
+    border: 5px solid orange;
+}
+
+div#legend-key div.legend-danger-box{
+    border: 5px solid red;
+}
+

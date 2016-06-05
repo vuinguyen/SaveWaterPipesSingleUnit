@@ -1,21 +1,47 @@
+$(document).ready(function(){
+	//Get Current data
+	var now = new Date();
+	var months = new Array(
+      "January","February","March","April","May",
+      "June","July","August","September","October",
+      "November","December");
+	var date =  months[now.getMonth()] + " " + now.getDate() + ", " + now.getFullYear();
+	
+	$("#currentDate").text("Date : " + date);
+	
+	//Unorder List for temperature. 
+	//Display top 10 and when you select the link, previous temperature, it displays the next 10.
+	$('ul li:gt(9)').hide();
+	
+	$('.display-previous').click(function() {
+		$('ul li:gt(9)').show("blind");
+	});
+});
+
+
 var socket = io();
 var userId = "user";
 
-
+/*
+// This will be OBE: BEGIN
 $('form').submit(function() {
     socket.emit('chat message', {value: $('#m').val(), userId: userId});
     $('#m').val('');
     return false;
 });
+// This will be OBE: END
+*/
 
+// This will be OBE: BEGIN
 $("#led-link").on('click', function(e){
     socket.emit('toogle led', {value: 0, userId: userId});
 });
+// This will be OBE: END
 
+// This will be OBE: BEGIN
 socket.on('toogle led', function(msg) {
     if(msg.value === false) {
         $('#messages').prepend($('<li>Toogle LED: OFF<span> - '+msg.userId+'</span></li>'));
-        //$('#messages-voltage').prepend($('<li>Vui - Toogle LED: OFF<span> - '+msg.userId+'</span></li>')); // VN
         $("#led-container").removeClass("on");
         $("#led-container").addClass("off");
         $("#led-container span").text("OFF");
@@ -28,14 +54,61 @@ socket.on('toogle led', function(msg) {
         $("#led-container span").text("ON");
     }
 });
+// This will be OBE: END
 
+// Vui's function: BEGIN
+socket.on('toggle motor', function(msg) {
+    if(msg.value === false) {
+        // turn faucet display to DRIPPING
+        $("#status").text("NOT DRIPPING");
+		$("#faucetStatus").attr("src","faucetOff.jpg"); 
+    }
+    else if(msg.value === true) {
+        // turn faucet display to NOT DRIPPING
+        $("#status").text("DRIPPING");
+		$("#faucetStatus").attr("src","faucetOn.jpg"); 
+    }
+});
+// Vui's function: END
 
 // Vui's function BEGINS
-socket.on('voltage value', function(msg) {
-    $('#messages-voltage').prepend($('<li><span> - '+msg+'</span></li>'));
+socket.on('temp value', function(msg) {
+    var now = new Date();
+	var time = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+    var firstPartMessage = '<span>Temp '+msg.temp+'&nbspF,&nbspCondition:';
+    var secondPartMessage = ', Time:'+time+'</span></li>';
+    if (msg.severity == 1)
+    {
+        // Creating the string manually, below
+        //$('#messages-temp').prepend($('<li class="good"><span>Temp '+msg.temp+'&nbspF,&nbspCondition:'+'Good'+', Time:'+time+'</span></li>'));
+        $('#messages-temp').prepend($('<li class="good">'+firstPartMessage+'Good'+secondPartMessage));
+    }
+    
+    else if (msg.severity == 2)
+    {
+           //$('#messages-temp').prepend($('<li class="warning"><span>Temp '+msg.temp+'&nbspF,&nbspCondition:'+'Warning'+', Time:'+time+'</span></li>')); 
+        $('#messages-temp').prepend($('<li class="warning">'+firstPartMessage+'Warning'+secondPartMessage));
+    }
+    else if (msg.severity == 3)
+    {
+            //$('#messages-temp').prepend($('<li class="danger"><span>Temp '+msg.temp+'&nbspF,&nbspCondition:'+'Danger'+', Time:'+time+'</span></li>'));
+        $('#messages-temp').prepend($('<li class="danger">'+firstPartMessage+'Danger'+secondPartMessage));
+    }
+    else // we're offline and in trouble
+    {
+           $('#messages-temp').append($('<li class="error"><span>'+'***WARNING: SENSOR OFFLINE ***'+'</span></li>')); 
+            
+    }
 });
 // Vui's function ENDS
 
+
+// Vui's function BEGINS
+$("#override").on('click', function(e){
+    socket.emit('toggle motor', {value: 0, userId: userId});
+});
+
+// Vui's function ENDS
 
 socket.on('chat message', function(msg) {
     $('#messages').prepend($('<li>'+msg.value+'<span> - '+msg.userId+'</span></li>'));

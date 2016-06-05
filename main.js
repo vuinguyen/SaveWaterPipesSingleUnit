@@ -31,7 +31,8 @@ console.log('MRAA Version: ' + mraa.getVersion()); //write the mraa version to t
 //var myOnboardLed = new mraa.Gpio(3, false, true); //LED hooked up to digital pin (or built in pin on Galileo Gen1)
 var myOnboardLed = new mraa.Gpio(13); //LED hooked up to digital pin 13 (or built in pin on Intel Galileo Gen2 as well as Intel Edison)
 myOnboardLed.dir(mraa.DIR_OUT); //set the gpio direction to output
-var ledState = true; //Boolean to hold the state of Led
+var ledState = true; //Boolean to hold the state of Led; this will be OBE soon
+var motorState = true; // Boolean to hold the state of motor
 
 
 // potentiometer hooked up here // VN
@@ -39,32 +40,65 @@ var upm_grove = require('jsupm_grove');
 //setup access analog input Analog pin #1 (A1)
 var groveSlide = new upm_grove.GroveSlide(1);   // pin 1    // VN
 
-var raw = 0;
+var rawSlider = 0;
 var volts = 0;
 var thresholdValue = 0.5;
+var ratio = 64/297;         // used to convert slider values to temp
+var constant = -107/4;      // used to convert slider values to temp
+var firstTemp = true;       // is this the first temperature reading?
 
-function voltageLoop()
+var criticalTemp = 40;
+var warningTemp = 55;
+
+function tempLoop()
 {
-    currentRaw = groveSlide.raw_value();
+    currentRawSlider = groveSlide.raw_value();
     currentVolts = groveSlide.voltage_value();
 
-    if (Math.abs(currentVolts - volts) > thresholdValue)
+    if ((firstTemp == true) || (Math.abs(currentVolts - volts) > thresholdValue))
     {
-        raw = currentRaw;
+        rawSlider = currentRawSlider;
         volts = currentVolts;
         
         //write the slider/potentiometer value to the console
-        var voltageValue = "Slider Value: " + raw + " = " + volts.toFixed(2) + " V";
-        console.log(voltageValue);
+        //var voltageValue = "Slider Value: " + rawSlider + " = " + volts.toFixed(2) + " V";
+        var temp = getTemp(rawSlider);
+        var severity = getSeverity(temp);
+        console.log(temp + " F" + ", Severity: " + severity);
+        //console.log(severity);
+        io.emit('temp value', {temp: temp, severity: severity});
+        //io.emit('temp value', {temp: temp});
+        //console.log(voltageValue);
         // and send the value to the webpage
-        io.emit('voltage value', voltageValue);
+        //io.emit('voltage value', voltageValue);
+        firstTemp = false;
     }
     
-    //wait 5s then call function again
-    setTimeout(voltageLoop, 5000);
+    //wait 3s then call function again
+    setTimeout(tempLoop, 3000);
 }
 
+function getTemp(rawSlider) 
+{
+    var temperature = (rawSlider * ratio) + constant; // convert slider to temperature
+    var temp2 = temperature.toPrecision(3);
+    return temp2;
+}
 
+function getSeverity(temp)
+{
+    var severity = 1;
+    if (temp <= warningTemp)
+    {
+        severity = 2;
+        if (temp <= criticalTemp)
+        {
+            severity = 3;
+        }
+    }
+    
+    return severity;
+}
 
 var express = require('express');
 var app = express();
@@ -103,8 +137,8 @@ io.on('connection', function(socket) {
     
     
     // Vui code BEGINS
-    // this is where we check the potentiometer value
-    voltageLoop();
+    // this is where we check the temperature value
+    tempLoop();
     // Vui code ENDS
     
     socket.on('user disconnect', function(msg) {
@@ -118,13 +152,23 @@ io.on('connection', function(socket) {
         console.log('message: ' + msg.value);
     });
     
+    /* 
+    // This will become OBE soon: BEGIN
     socket.on('toogle led', function(msg) {
         myOnboardLed.write(ledState?1:0); //if ledState is true then write a '1' (high) otherwise write a '0' (low)
         msg.value = ledState;
         io.emit('toogle led', msg);
         ledState = !ledState; //invert the ledState
     });
+    // This will become OBE soon: END
+    */
     
+    socket.on('toggle motor', function(msg) {
+        myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
+        msg.value = motorState;
+        io.emit('toggle motor', msg);
+        motorState = !motorState; //invert the ledState
+    });
 });
 
 

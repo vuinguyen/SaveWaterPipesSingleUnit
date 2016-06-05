@@ -1,7 +1,7 @@
 #TemperatureDetail{
 	float: left;
-	width: 40%; 
-    /* width: 35% */ /* This is my change: VN */
+	/*width: 40%; */
+    width: 35%; /* This is my change: VN */
     display: block;
 }
 
@@ -9,11 +9,12 @@ ul {
 	padding:5px;
 	list-style-type: none;
 	background-color: #fafcfe;
-    width: 45%
+    /*width: 45% */
+    width: 95%;
 }
 
 ul li {
-	margin:5px;
+	/*margin:5px; */
 	text-decoration: bold;
 }
 

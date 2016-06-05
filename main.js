@@ -46,7 +46,7 @@ var myUln200xa_obj = new Uln200xa_lib.ULN200XA(4096, 8, 9, 10, 11);
 
 // 1 means in test mode (with just a potentiometer), 0 means in demo mode (with the whole setup)
 // basically, if it's 1, we're got an onboardLed, if it's 0, we have a steppermotor
-var testMode = 1; 
+var testMode = 0; 
 var ledState = true;   //Boolean to hold the state of Led; this will be OBE soon
 var motorState = true; // Boolean to hold the state of motor
 
@@ -75,11 +75,8 @@ var averageVolts = 0;
 var averageSlider = 0;
 var averageTemp = 0;
 
-//var criticalTempCounter = 0;
-//var warningTempCounter = 0;
-
-//var turnMotorForward = 0;
-//var turnMotorBack = 0;
+var lcd = require('./lcd');
+var display = new lcd.LCD(0);   // 12C socket
 
 var valveOpen = 0; // state of valve
 
@@ -93,7 +90,8 @@ var valveOpen = 0; // state of valve
 
 	    myUln200xa_obj.setDirection(Uln200xa_lib.ULN200XA.DIR_CW);
 
-	    console.log("Rotating 1 revolution clockwise.");
+	    //console.log("Rotating 1 revolution clockwise.");
+        console.log("Opening valve");
 
 	    //myUln200xa_obj.stepperSteps(4096);
         myUln200xa_obj.stepperSteps(3072);  // 3/4 revolution
@@ -108,7 +106,8 @@ var valveOpen = 0; // state of valve
 	{
 
 	    //console.log("Rotating 1/4 revolution counter clockwise.");
-        console.log("Rotating 1 revolution counter clockwise");
+        //console.log("Rotating 1 revolution counter clockwise");
+        console.log("Closing valve");
 
 	    myUln200xa_obj.setDirection(Uln200xa_lib.ULN200XA.DIR_CCW);
 
@@ -126,6 +125,30 @@ var valveOpen = 0; // state of valve
 
 	//setTimeout(myUln200xa_obj.reverseDirection, 2000); // close the valve
 
+function setLCDColor(inSeverity) 
+{
+    var red = 0;
+    var green = 192;
+    var blue = 0;
+    
+    if (inSeverity == 3)
+    {
+        red = 192;
+        green = 0;
+        blue = 0; 
+    }
+    else if (inSeverity == 2)
+    {
+        red = 192;
+        green = 192;
+        blue = 0;
+        
+    }
+    
+    display.setColor(red, green, blue);
+};
+
+
 
 function tempLoop()
 {
@@ -142,7 +165,6 @@ function tempLoop()
         var temp = getTemp(rawSlider);
         var severity = getSeverity(temp);
         console.log(temp + " F" + ", Severity: " + severity);
-        //console.log(severity);
         io.emit('temp value', {temp: temp, severity: severity});
         firstTemp = false;
     }
@@ -166,45 +188,31 @@ function tempLoop()
             averageSlider = (totalSlider/averageItemCount);
             averageTemp = (totalTemp/averageItemCount).toPrecision(3);
             var averageSeverity = getSeverity(averageTemp);
-            console.log("Average temp: " + averageTemp + " F" + ", Severity: " + averageSeverity + "\n");
+            //console.log("Average temp: " + averageTemp + " F" + ", Severity: " + averageSeverity + "\n");
             
             io.emit('temp value', {temp: averageTemp, severity: averageSeverity});
-            //console.log("Slider Average: " + averageSlider + " = " + averageVolts.toFixed(2) + " V Average\n"); 
+            
+            // display LCD stuff: BEGIN
+            setLCDColor(averageSeverity);
+            display.setCursor(0,0);
+            var displayString = "Average temp: " + averageTemp + " F" + ", Severity: " + averageSeverity + "\n"
+            //var displayString = "Temp: " + temperature + " F";
+            console.log(displayString);
+            display.write(displayString);
+            // display LCD stuff: END
             
             if ((averageSeverity <= 2) && (valveOpen == 1))
                 {
                     // close the valve
                     myUln200xa_obj.reverseDirection();
                     valveOpen = 0;
-                    //warningTempCounter++;
-                    //console.log("warningTempCounter: " + warningTempCounter);
                 }
             if ((averageSeverity == 3) && (valveOpen == 0))
                 {
-                    //criticalTempCounter++;
                     // open the valve
                     myUln200xa_obj.goForward();
                     valveOpen = 1;
-                    //console.log("criticalTempCounter: " + criticalTempCounter);
                 }
-            
-            /*
-            if ((warningTempCounter >= 2) && (turnMotorForward == 1))
-                {
-                    // close the valve
-                    myUln200xa_obj.reverseDirection();
-                    warningTempCounter = 0;
-                    criticalTempCounter = 0;
-                    turnMotorForward = 0;
-                }
-            
-            if ((criticalTempCounter == 1) && (turnMotorForward == 0))
-                {
-                    // open the valve
-                    myUln200xa_obj.goForward();
-                    turnMotorForward = 1;
-                }
-                */
             
             totalSlider = 0;
             totalVolts = 0;
@@ -308,7 +316,25 @@ io.on('connection', function(socket) {
         }
         else 
         {
-              // add motor stuff here  
+            // add motor stuff here 
+            myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
+               
+            msg.value = motorState;
+            io.emit('toggle motor', msg);
+            
+            if (motorState == 0)
+                {
+                    myUln200xa_obj.reverseDirection();
+                    //myOnboardLed.write()
+                }
+            else // close valve, turn to non-dripping
+                {
+                    myUln200xa_obj.goForward();
+                }
+            
+            
+            //myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
+            motorState = !motorState; //invert the motorState
         }
     });
     

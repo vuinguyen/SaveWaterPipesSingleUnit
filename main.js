@@ -67,8 +67,10 @@ var averageCounter = 0;
 
 var totalVolts = 0;
 var totalSlider = 0;
+var totalTemp = 0;
 var averageVolts = 0;
 var averageSlider = 0;
+var averageTemp = 0;
 
 function tempLoop()
 {
@@ -96,19 +98,33 @@ function tempLoop()
         
         totalVolts = volts + totalVolts;
         totalSlider = rawSlider + totalSlider;
+        var temp = getTemp(rawSlider);
+        //var severity = getSeverity(temp); 
+        totalTemp = parseFloat(temp) + parseFloat(totalTemp);
+        //var totalTemp = getTemp(totalSlider);
+        console.log("Temp: " + temp + ", totalTemp: " + totalTemp + "\n");
         
         if (averageCounter == averageItemCount)
         {
             //write the slider values to the console
-            console.log("Slider Value: " + rawSlider + " = " + volts.toFixed(2) + " V");   
-            averageVolts = (totalVolts/5);
-            averageSlider = (totalSlider/5);
-            console.log("Slider Average: " + averageSlider + " = " + averageVolts.toFixed(2) + " V Average\n"); 
+            //console.log("Slider Value: " + rawSlider + " = " + volts.toFixed(2) + " V");  
+            console.log("Current temp: " + temp + " F" + ", Severity: " + getSeverity(temp));
+            averageVolts = (totalVolts/averageItemCount);
+            averageSlider = (totalSlider/averageItemCount);
+            averageTemp = (totalTemp/averageItemCount);
+            console.log("Average temp: " + averageTemp + " F" + ", Severity: " + getSeverity(averageTemp) + "\n");
+            //console.log("Slider Average: " + averageSlider + " = " + averageVolts.toFixed(2) + " V Average\n"); 
         
+            
+            //console.log(temp + " F" + ", Severity: " + severity);
+            
             totalSlider = 0;
             totalVolts = 0;
+            totalTemp = 0;
             averageSlider = 0;
             averageVolts = 0;
+            averageTemp = 0;
+            
             averageCounter = 0;
         }
         averageCounter++;

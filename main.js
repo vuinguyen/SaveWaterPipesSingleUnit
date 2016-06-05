@@ -36,9 +36,18 @@ var motorState = true; // Boolean to hold the state of motor
 
 
 // potentiometer hooked up here // VN
+// or, the water temperature sensor if if demo mode // VN
 var upm_grove = require('jsupm_grove'); 
 //setup access analog input Analog pin #1 (A1)
 var groveSlide = new upm_grove.GroveSlide(1);   // pin 1    // VN
+
+var Uln200xa_lib = require('jsupm_uln200xa');      // this is for the stepmotor
+// Instantiate a Stepper motor on a ULN200XA Darlington Motor Driver
+// This was tested with the Grove Geared Step Motor with Driver
+// Instantiate a ULN2003XA stepper object
+var myUln200xa_obj = new Uln200xa_lib.ULN200XA(4096, 8, 9, 10, 11);
+
+var testMode = 1; // 1 means in test mode (with just a potentiometer), 0 means in demo mode (with the whole setup)
 
 var rawSlider = 0;
 var volts = 0;

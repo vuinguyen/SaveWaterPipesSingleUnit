@@ -54,13 +54,16 @@ var rawSlider = 0;
 var volts = 0;
 var thresholdValue = 0.5;
 var ratio = 1/5;            // used to convert slider values to temp
-var constant = -28;         // used to convert slider values to temp
+//var constant = -28;         // used to convert slider values to temp
+var constant = -55;
 var firstTemp = true;       // is this the first temperature reading?
 
 var timeOutSeconds = 3000;  // 1000 is 1 second
 
-var criticalTemp = 40;
-var warningTemp = 55;
+//var criticalTemp = 60;
+//var warningTemp = 65;
+var criticalTemp = 33;
+var warningTemp = 38;
 
 var averageItemCount = 5;
 var averageCounter = 0;
@@ -71,6 +74,58 @@ var totalTemp = 0;
 var averageVolts = 0;
 var averageSlider = 0;
 var averageTemp = 0;
+
+//var criticalTempCounter = 0;
+//var warningTempCounter = 0;
+
+//var turnMotorForward = 0;
+//var turnMotorBack = 0;
+
+var valveOpen = 0; // state of valve
+
+// motor stuff
+// go clockwise to open
+	myUln200xa_obj.goForward = function()
+
+	{
+
+	    myUln200xa_obj.setSpeed(5); // 5 RPMs
+
+	    myUln200xa_obj.setDirection(Uln200xa_lib.ULN200XA.DIR_CW);
+
+	    console.log("Rotating 1 revolution clockwise.");
+
+	    //myUln200xa_obj.stepperSteps(4096);
+        myUln200xa_obj.stepperSteps(3072);  // 3/4 revolution
+       // myUln200xa_obj.stepperSteps(1024);  // 1/4 revolution
+	};
+
+	 
+// motor stuff
+    // go counterclockwise to open
+	myUln200xa_obj.reverseDirection = function()
+
+	{
+
+	    //console.log("Rotating 1/4 revolution counter clockwise.");
+        console.log("Rotating 1 revolution counter clockwise");
+
+	    myUln200xa_obj.setDirection(Uln200xa_lib.ULN200XA.DIR_CCW);
+
+	    //myUln200xa_obj.stepperSteps(2048);
+        //myUln200xa_obj.stepperSteps(1024);
+        //myUln200xa_obj.stepperSteps(4096);  
+        myUln200xa_obj.stepperSteps(3200); // 3/4 +
+	};
+
+
+// Run ULN200xa driven stepper
+	//myUln200xa_obj.goForward();    // open the valve
+
+    //myUln200xa_obj.reverseDirection();
+
+	//setTimeout(myUln200xa_obj.reverseDirection, 2000); // close the valve
+
 
 function tempLoop()
 {
@@ -99,10 +154,8 @@ function tempLoop()
         totalVolts = volts + totalVolts;
         totalSlider = rawSlider + totalSlider;
         var temp = getTemp(rawSlider);
-        //var severity = getSeverity(temp); 
         totalTemp = parseFloat(temp) + parseFloat(totalTemp);
-        //var totalTemp = getTemp(totalSlider);
-        console.log("Temp: " + temp + ", totalTemp: " + totalTemp + "\n");
+        //console.log("Temp: " + temp + ", totalTemp: " + totalTemp + "\n");
         
         if (averageCounter == averageItemCount)
         {
@@ -111,12 +164,47 @@ function tempLoop()
             console.log("Current temp: " + temp + " F" + ", Severity: " + getSeverity(temp));
             averageVolts = (totalVolts/averageItemCount);
             averageSlider = (totalSlider/averageItemCount);
-            averageTemp = (totalTemp/averageItemCount);
-            console.log("Average temp: " + averageTemp + " F" + ", Severity: " + getSeverity(averageTemp) + "\n");
-            //console.log("Slider Average: " + averageSlider + " = " + averageVolts.toFixed(2) + " V Average\n"); 
-        
+            averageTemp = (totalTemp/averageItemCount).toPrecision(3);
+            var averageSeverity = getSeverity(averageTemp);
+            console.log("Average temp: " + averageTemp + " F" + ", Severity: " + averageSeverity + "\n");
             
-            //console.log(temp + " F" + ", Severity: " + severity);
+            io.emit('temp value', {temp: averageTemp, severity: averageSeverity});
+            //console.log("Slider Average: " + averageSlider + " = " + averageVolts.toFixed(2) + " V Average\n"); 
+            
+            if ((averageSeverity <= 2) && (valveOpen == 1))
+                {
+                    // close the valve
+                    myUln200xa_obj.reverseDirection();
+                    valveOpen = 0;
+                    //warningTempCounter++;
+                    //console.log("warningTempCounter: " + warningTempCounter);
+                }
+            if ((averageSeverity == 3) && (valveOpen == 0))
+                {
+                    //criticalTempCounter++;
+                    // open the valve
+                    myUln200xa_obj.goForward();
+                    valveOpen = 1;
+                    //console.log("criticalTempCounter: " + criticalTempCounter);
+                }
+            
+            /*
+            if ((warningTempCounter >= 2) && (turnMotorForward == 1))
+                {
+                    // close the valve
+                    myUln200xa_obj.reverseDirection();
+                    warningTempCounter = 0;
+                    criticalTempCounter = 0;
+                    turnMotorForward = 0;
+                }
+            
+            if ((criticalTempCounter == 1) && (turnMotorForward == 0))
+                {
+                    // open the valve
+                    myUln200xa_obj.goForward();
+                    turnMotorForward = 1;
+                }
+                */
             
             totalSlider = 0;
             totalVolts = 0;

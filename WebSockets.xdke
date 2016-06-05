@@ -1,0 +1,279 @@
+{
+  "project": {
+    "projectSettingsVersion": "2.0.0",
+    "initialAutoPluginCount": 0,
+    "currentBuildConfiguration": "Android",
+    "projectFiles": {},
+    "projectDirectories": {}
+  },
+  "iot-tab": {
+    "fileStatus": {
+      "LICENSE.md": {
+        "previousModTime": 1463185993000,
+        "modified": 1463185993000,
+        "seen": true,
+        "name": "LICENSE.md"
+      },
+      "README.md": {
+        "previousModTime": 1463185993000,
+        "modified": 1463185993000,
+        "seen": true,
+        "name": "README.md"
+      },
+      "WebSockets.xdk": {
+        "previousModTime": 1464632684000,
+        "modified": 1464632684000,
+        "seen": true,
+        "name": "WebSockets.xdk"
+      },
+      "WebSockets.xdke": {
+        "previousModTime": 1464758780000,
+        "modified": 1464758780000,
+        "seen": true,
+        "name": "WebSockets.xdke"
+      },
+      "icon.png": {
+        "previousModTime": 1463185993000,
+        "modified": 1463185993000,
+        "seen": true,
+        "name": "icon.png"
+      },
+      "main.js": {
+        "previousModTime": 1464668158000,
+        "modified": 1464668158000,
+        "seen": true,
+        "name": "main.js"
+      },
+      "package.json": {
+        "previousModTime": 1464758176000,
+        "modified": 1464758176000,
+        "seen": true,
+        "name": "package.json"
+      },
+      "websockets_client.png": {
+        "previousModTime": 1463185993000,
+        "modified": 1463185993000,
+        "seen": true,
+        "name": "websockets_client.png"
+      },
+      "client/index.css": {
+        "previousModTime": 1464664764000,
+        "modified": 1464664764000,
+        "seen": true,
+        "name": "client/index.css"
+      },
+      "client/index.html": {
+        "previousModTime": 1464758908000,
+        "modified": 1464758908000,
+        "seen": true,
+        "name": "client/index.html"
+      },
+      "client/index.js": {
+        "previousModTime": 1464758908000,
+        "modified": 1464758908000,
+        "seen": true,
+        "name": "client/index.js"
+      },
+      "xdk/project-info.json": {
+        "previousModTime": 1463185993000,
+        "modified": 1463185993000,
+        "seen": true,
+        "name": "xdk/project-info.json"
+      },
+      ".gitignore": {
+        "previousModTime": 1464665685000,
+        "modified": 1464665685000,
+        "seen": true,
+        "name": ".gitignore"
+      },
+      "client/Faucet.jpg": {
+        "previousModTime": 1463854041000,
+        "modified": 1463854041000,
+        "seen": true,
+        "name": "client/Faucet.jpg"
+      },
+      "client/faucet-styles.css": {
+        "previousModTime": 1464736564000,
+        "modified": 1464736564000,
+        "seen": true,
+        "name": "client/faucet-styles.css"
+      },
+      "client/index.html.orig": {
+        "previousModTime": 1463189126000,
+        "modified": 1463189126000,
+        "seen": true,
+        "name": "client/index.html.orig"
+      },
+      "client/main-styles.css": {
+        "previousModTime": 1464736753000,
+        "modified": 1464736753000,
+        "seen": true,
+        "name": "client/main-styles.css"
+      },
+      "client/temperature-styles.css": {
+        "previousModTime": 1464737025000,
+        "modified": 1464737025000,
+        "seen": true,
+        "name": "client/temperature-styles.css"
+      },
+      "client/override.js": {
+        "previousModTime": 1464739644000,
+        "modified": 1464739644000,
+        "seen": true,
+        "name": "client/override.js"
+      },
+      "client/faucetOff.jpg": {
+        "previousModTime": 1463867339000,
+        "modified": 1463867339000,
+        "seen": true,
+        "name": "client/faucetOff.jpg"
+      },
+      "client/faucetOn.jpg": {
+        "previousModTime": 1464735575000,
+        "modified": 1464735575000,
+        "seen": true,
+        "name": "client/faucetOn.jpg"
+      },
+      "client/files_old/WebSockets.xdk.orig": {
+        "previousModTime": 1464632756000,
+        "modified": 1464632756000,
+        "seen": true,
+        "name": "client/files_old/WebSockets.xdk.orig"
+      },
+      "client/files_old/faucet-styles.css.orig": {
+        "previousModTime": 1463854041000,
+        "modified": 1463854041000,
+        "seen": true,
+        "name": "client/files_old/faucet-styles.css.orig"
+      },
+      "client/files_old/index.html.crystal": {
+        "previousModTime": 1464735593000,
+        "modified": 1464735593000,
+        "seen": true,
+        "name": "client/files_old/index.html.crystal"
+      },
+      "client/files_old/index.html.orig": {
+        "previousModTime": 1463189126000,
+        "modified": 1463189126000,
+        "seen": true,
+        "name": "client/files_old/index.html.orig"
+      },
+      "client/files_old/index.html.orig2": {
+        "previousModTime": 1463868056000,
+        "modified": 1463868056000,
+        "seen": true,
+        "name": "client/files_old/index.html.orig2"
+      },
+      "client/files_old/main-styles.css.orig": {
+        "previousModTime": 1463859004000,
+        "modified": 1463859004000,
+        "seen": true,
+        "name": "client/files_old/main-styles.css.orig"
+      },
+      "client/files_old/override.js.orig": {
+        "previousModTime": 1463867339000,
+        "modified": 1463867339000,
+        "seen": true,
+        "name": "client/files_old/override.js.orig"
+      },
+      "client/files_old/temperature-styles.css.orig": {
+        "previousModTime": 1463854041000,
+        "modified": 1463854041000,
+        "seen": true,
+        "name": "client/files_old/temperature-styles.css.orig"
+      },
+      "client/faucet_background.png": {
+        "previousModTime": 1464735593000,
+        "modified": 1464735593000,
+        "seen": true,
+        "name": "client/faucet_background.png"
+      },
+      "client/Thumbs.db": {
+        "previousModTime": 1464623920000,
+        "modified": 1464623920000,
+        "seen": true,
+        "name": "client/Thumbs.db"
+      },
+      "client/files_old/faucet-styles.css.crystal": {
+        "previousModTime": 1464735593000,
+        "modified": 1464735593000,
+        "seen": true,
+        "name": "client/files_old/faucet-styles.css.crystal"
+      },
+      "client/files_old/main-styles.css.crystal": {
+        "previousModTime": 1464735593000,
+        "modified": 1464735593000,
+        "seen": true,
+        "name": "client/files_old/main-styles.css.crystal"
+      },
+      "client/files_old/override.js.crystal": {
+        "previousModTime": 1464735593000,
+        "modified": 1464735593000,
+        "seen": true,
+        "name": "client/files_old/override.js.crystal"
+      },
+      "client/files_old/temperature-styles.css.crystal": {
+        "previousModTime": 1464735593000,
+        "modified": 1464735593000,
+        "seen": true,
+        "name": "client/files_old/temperature-styles.css.crystal"
+      },
+      "client/files_old/5_30_16/WebSockets.xdk.orig": {
+        "previousModTime": 1464632756000,
+        "modified": 1464632756000,
+        "seen": true,
+        "name": "client/files_old/5_30_16/WebSockets.xdk.orig"
+      },
+      "client/files_old/5_30_16/faucet-styles.css.orig": {
+        "previousModTime": 1463854041000,
+        "modified": 1463854041000,
+        "seen": true,
+        "name": "client/files_old/5_30_16/faucet-styles.css.orig"
+      },
+      "client/files_old/5_30_16/index.html.crystal": {
+        "previousModTime": 1464623920000,
+        "modified": 1464623920000,
+        "seen": true,
+        "name": "client/files_old/5_30_16/index.html.crystal"
+      },
+      "client/files_old/5_30_16/index.html.orig": {
+        "previousModTime": 1463189126000,
+        "modified": 1463189126000,
+        "seen": true,
+        "name": "client/files_old/5_30_16/index.html.orig"
+      },
+      "client/files_old/5_30_16/index.html.orig2": {
+        "previousModTime": 1463868056000,
+        "modified": 1463868056000,
+        "seen": true,
+        "name": "client/files_old/5_30_16/index.html.orig2"
+      },
+      "client/files_old/5_30_16/main-styles.css.orig": {
+        "previousModTime": 1463859004000,
+        "modified": 1463859004000,
+        "seen": true,
+        "name": "client/files_old/5_30_16/main-styles.css.orig"
+      },
+      "client/files_old/5_30_16/override.js.orig": {
+        "previousModTime": 1463867339000,
+        "modified": 1463867339000,
+        "seen": true,
+        "name": "client/files_old/5_30_16/override.js.orig"
+      },
+      "client/files_old/5_30_16/temperature-styles.css.orig": {
+        "previousModTime": 1463854041000,
+        "modified": 1463854041000,
+        "seen": true,
+        "name": "client/files_old/5_30_16/temperature-styles.css.orig"
+      }
+    },
+    "boardFileStatus": {
+      "client/index.html": {
+        "previousModTime": 1464758910961
+      },
+      "client/index.js": {
+        "previousModTime": 1464758910961
+      }
+    }
+  }
+}

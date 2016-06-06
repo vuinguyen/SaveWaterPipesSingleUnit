@@ -46,7 +46,11 @@ var myUln200xa_obj = new Uln200xa_lib.ULN200XA(4096, 8, 9, 10, 11);
 
 // 1 means in test mode (with just a potentiometer), 0 means in demo mode (with the whole setup)
 // basically, if it's 1, we're got an onboardLed, if it's 0, we have a steppermotor
-var testMode = 0; 
+var testMode = 1; 
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+
 var ledState = true;   //Boolean to hold the state of Led; this will be OBE soon
 var motorState = true; // Boolean to hold the state of motor
 
@@ -80,6 +84,26 @@ var lcd = require('./lcd');
 var display = new lcd.LCD(0);   // 12C socket
 
 var valveOpen = 0; // state of valve
+
+function printStuff() {
+    // print to console
+    // print to website
+    // print to LCD Display (if testMode is 0)
+};
+
+// handle for testCase = 1 or 0 too.
+function dripFaucet() {
+    // call printStuff
+    // turn LEDLight on board on
+    // change website graphic
+    // turn motor to open valve (if testMode is 0)
+    // change motor state
+    // change valveOpen state
+};
+
+function closeFaucet() {
+    
+};
 
 // motor stuff
 // go clockwise to open

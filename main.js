@@ -64,6 +64,7 @@ var timeOutSeconds = 3000;  // 1000 is 1 second
 //var warningTemp = 65;
 var criticalTemp = 33;
 var warningTemp = 38;
+var offLineTemp = 10; 
 
 var averageItemCount = 5;
 var averageCounter = 0;

@@ -110,9 +110,11 @@ $("#override").on('click', function(e){
 
 // Vui's function ENDS
 
+// This function will be OBE: BEGIN
 socket.on('chat message', function(msg) {
     $('#messages').prepend($('<li>'+msg.value+'<span> - '+msg.userId+'</span></li>'));
 });
+// This function will be OBE: END
 
 socket.on('connected users', function(msg) {
     $('#user-container').html("");

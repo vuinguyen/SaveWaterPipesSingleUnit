@@ -59,12 +59,12 @@ socket.on('toogle led', function(msg) {
 // Vui's function: BEGIN
 socket.on('toggle motor', function(msg) {
     if(msg.value === false) {
-        // turn faucet display to DRIPPING
+        // turn faucet display to NOT DRIPPING
         $("#status").text("NOT DRIPPING");
 		$("#faucetStatus").attr("src","faucetOff.jpg"); 
     }
     else if(msg.value === true) {
-        // turn faucet display to NOT DRIPPING
+        // turn faucet display to DRIPPING
         $("#status").text("DRIPPING");
 		$("#faucetStatus").attr("src","faucetOn.jpg"); 
     }

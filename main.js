@@ -59,7 +59,9 @@ var display = new lcd.LCD(0);   // 12C socket
 
 
 var ledState = true;   //Boolean to hold the state of Led; this will be OBE soon
-var motorState = true; // Boolean to hold the state of motor and onboard LED
+//var motorState = true; // Boolean to hold the state of motor and onboard LED
+var motorState = false; // Boolean to hold the state of motor and onboard LED
+                        // if false, valve is closed and onboard LED is off
 
 var rawSlider = 0;
 var volts = 0;
@@ -106,10 +108,8 @@ function printStuff(inTemp, inSeverity, average) {
     display.setCursor(0,0);
     display.write("Temp: " + inTemp + " F");          
 };
-
-// handle for testCase = 1 or 0 too.
+/*
 function faucetWorks() {
-    // call printStuff
     
     // turn LEDLight on board on
     // change website graphic
@@ -122,9 +122,62 @@ function faucetWorks() {
 function closeFaucet() {
     
 };
+*/
+
+/*
+myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
+               
+            msg.value = motorState;
+            io.emit('toggle motor', msg);
+            
+            if (motorState == 0)
+                {
+                    myUln200xa_obj.reverseDirection();
+                    //myOnboardLed.write()
+                }
+            else // close valve, turn to non-dripping
+                {
+                    myUln200xa_obj.goForward();
+                }
+            
+            
+            //myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
+            motorState = !motorState; //invert the motorState
+        //}
+*/
 
 // motor stuff
 // go clockwise to open
+var openValve = function() {
+    myUln200xa_obj.setSpeed(5); // 5 RPMs
+
+	    myUln200xa_obj.setDirection(Uln200xa_lib.ULN200XA.DIR_CW);
+
+	    //console.log("Rotating 1 revolution clockwise.");
+        console.log("Opening valve");
+
+	    //myUln200xa_obj.stepperSteps(4096);
+        myUln200xa_obj.stepperSteps(3072);  // 3/4 revolution
+       // myUln200xa_obj.stepperSteps(1024);  // 1/4 revolution
+};
+
+var closeValve = function() {
+    //console.log("Rotating 1/4 revolution counter clockwise.");
+        //console.log("Rotating 1 revolution counter clockwise");
+        console.log("Closing valve");
+
+	    myUln200xa_obj.setDirection(Uln200xa_lib.ULN200XA.DIR_CCW);
+
+	    //myUln200xa_obj.stepperSteps(2048);
+        //myUln200xa_obj.stepperSteps(1024);
+        //myUln200xa_obj.stepperSteps(4096);  
+        myUln200xa_obj.stepperSteps(3200); // 3/4 +
+};
+
+myUln200xa_obj.goForward = openValve;
+myUln200xa_obj.reverseDirection  = closeValve;
+
+/*
 	myUln200xa_obj.goForward = function()
 
 	{
@@ -140,10 +193,9 @@ function closeFaucet() {
         myUln200xa_obj.stepperSteps(3072);  // 3/4 revolution
        // myUln200xa_obj.stepperSteps(1024);  // 1/4 revolution
 	};
-
 	 
 // motor stuff
-    // go counterclockwise to open
+    // go counterclockwise to close
 	myUln200xa_obj.reverseDirection = function()
 
 	{
@@ -159,7 +211,7 @@ function closeFaucet() {
         //myUln200xa_obj.stepperSteps(4096);  
         myUln200xa_obj.stepperSteps(3200); // 3/4 +
 	};
-
+*/
 
 // Run ULN200xa driven stepper
 	//myUln200xa_obj.goForward();    // open the valve
@@ -244,17 +296,33 @@ function tempLoop()
             //display.write("Temp: " + averageTemp + " F");
             // display LCD stuff: END
             
-            if ((averageSeverity <= 2) && (valveOpen == 1))
+            //if ((averageSeverity <= 2) && (valveOpen == 1))
+            // valve is OPEN
+            if ((averageSeverity <= 2) && (motorState == true))
                 {
                     // close the valve
-                    myUln200xa_obj.reverseDirection();
-                    valveOpen = 0;
+                    //myUln200xa_obj.reverseDirection();
+                    closeValve();
+                    //valveOpen = 0;
+                    
+                    //msg.value = motorState;
+                    motorState = !motorState; //invert the motorState
+                    myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
+                    io.emit('toggle motor', {value: motorState});
+                    
                 }
-            if ((averageSeverity == 3) && (valveOpen == 0))
+            //if ((averageSeverity == 3) && (valveOpen == 0))
+              if ((averageSeverity == 3) && (motorState == false))
                 {
                     // open the valve
-                    myUln200xa_obj.goForward();
-                    valveOpen = 1;
+                    //myUln200xa_obj.goForward();
+                    openValve();
+                    //valveOpen = 1;
+                    
+                    motorState = !motorState; //invert the motorState
+                    myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
+                    io.emit('toggle motor', {value: motorState});
+                    
                 }
             
             totalSlider = 0;
@@ -360,24 +428,28 @@ io.on('connection', function(socket) {
         //else 
        // {
             // add motor stuff here 
+            motorState = !motorState; //invert the motorState
+            
+            if (motorState == false)
+                {
+                    // close the valve
+                    //myUln200xa_obj.reverseDirection();
+                    closeValve();
+                    //myOnboardLed.write()
+                }
+            else // open valve, turn to dripping
+                {
+                    //myUln200xa_obj.goForward();
+                    openValve();
+                }
+            
             myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
                
             msg.value = motorState;
+        
             io.emit('toggle motor', msg);
-            
-            if (motorState == 0)
-                {
-                    myUln200xa_obj.reverseDirection();
-                    //myOnboardLed.write()
-                }
-            else // close valve, turn to non-dripping
-                {
-                    myUln200xa_obj.goForward();
-                }
-            
-            
             //myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
-            motorState = !motorState; //invert the motorState
+            
         //}
     });
     

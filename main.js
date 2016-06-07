@@ -28,12 +28,11 @@ Review README.md file for in-depth information about web sockets communication
 
 var mraa = require('mraa'); //require mraa
 console.log('MRAA Version: ' + mraa.getVersion()); //write the mraa version to the Intel XDK console
-//var myOnboardLed = new mraa.Gpio(3, false, true); //LED hooked up to digital pin (or built in pin on Galileo Gen1)
 var myOnboardLed = new mraa.Gpio(13); //LED hooked up to digital pin 13 (or built in pin on Intel Galileo Gen2 as well as Intel Edison)
 myOnboardLed.dir(mraa.DIR_OUT); //set the gpio direction to output
 
 // potentiometer hooked up here // VN
-// or, the water temperature sensor if if demo mode // VN
+// or, the water temperature sensor if in demo mode // VN
 var upm_grove = require('jsupm_grove'); 
 //setup access analog input Analog pin #1 (A0)
 var groveSlide = new upm_grove.GroveSlide(0);   // pin 0    // VN
@@ -44,15 +43,23 @@ var Uln200xa_lib = require('jsupm_uln200xa');      // this is for the stepmotor
 // Instantiate a ULN2003XA stepper object
 var myUln200xa_obj = new Uln200xa_lib.ULN200XA(4096, 8, 9, 10, 11);
 
+var lcd = require('./lcd');
+var display = new lcd.LCD(0);   // 12C socket
+
+
+
 // 1 means in test mode (with just a potentiometer), 0 means in demo mode (with the whole setup)
-// basically, if it's 1, we're got an onboardLed, if it's 0, we have a steppermotor
-var testMode = 1; 
+// basically, if it's 0, we have a steppermotor and LCD Display
+//var testMode = 1; 
+// actually, this might not be necessary, because if we're not connected to the steppermotor or
+// the LCD Display, then nothing happens. But we should display stuff that corresponds to the
+// steppermotor and LCD Display actions nontheless
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 
 
 var ledState = true;   //Boolean to hold the state of Led; this will be OBE soon
-var motorState = true; // Boolean to hold the state of motor
+var motorState = true; // Boolean to hold the state of motor and onboard LED
 
 var rawSlider = 0;
 var volts = 0;
@@ -81,22 +88,33 @@ var averageSlider = 0;
 var averageTemp = 0;
 
 var lcd = require('./lcd');
-var display = new lcd.LCD(0);   // 12C socket
+var display = new lcd.LCD(0);   // 12C socket   
 
 var valveOpen = 0; // state of valve
 
-function printStuff() {
+function printStuff(inTemp, inSeverity, average) {
     // print to console
+    var consoleDisplay = (average) ? "Average temp: " + inTemp + " F" + ", Severity: " + inSeverity + "\n" : 
+    "Current temp: " + inTemp + " F" + ", Severity: " + inSeverity + "\n";
+    console.log(consoleDisplay);
+    
     // print to website
-    // print to LCD Display (if testMode is 0)
+    io.emit('temp value', {temp: inTemp, severity: inSeverity});
+            
+     // print to LCD Display
+    setLCDColor(inSeverity);
+    display.setCursor(0,0);
+    display.write("Temp: " + inTemp + " F");          
 };
 
 // handle for testCase = 1 or 0 too.
-function dripFaucet() {
+function faucetWorks() {
     // call printStuff
+    
     // turn LEDLight on board on
     // change website graphic
-    // turn motor to open valve (if testMode is 0)
+    // turn motor to open valve
+    
     // change motor state
     // change valveOpen state
 };
@@ -189,8 +207,7 @@ function tempLoop()
         //var voltageValue = "Slider Value: " + rawSlider + " = " + volts.toFixed(2) + " V";
         var temp = getTemp(rawSlider);
         var severity = getSeverity(temp);
-        console.log(temp + " F" + ", Severity: " + severity);
-        io.emit('temp value', {temp: temp, severity: severity});
+        printStuff(temp, severity);
         firstTemp = false;
     }
     else if (Math.abs(currentVolts - volts) <= thresholdValue)  
@@ -203,27 +220,28 @@ function tempLoop()
         var temp = getTemp(rawSlider);
         totalTemp = parseFloat(temp) + parseFloat(totalTemp);
         //console.log("Temp: " + temp + ", totalTemp: " + totalTemp + "\n");
-        
         if (averageCounter == averageItemCount)
         {
             //write the slider values to the console
             //console.log("Slider Value: " + rawSlider + " = " + volts.toFixed(2) + " V");  
-            console.log("Current temp: " + temp + " F" + ", Severity: " + getSeverity(temp));
+            //console.log("Current temp: " + temp + " F" + ", Severity: " + getSeverity(temp));
             averageVolts = (totalVolts/averageItemCount);
             averageSlider = (totalSlider/averageItemCount);
             averageTemp = (totalTemp/averageItemCount).toPrecision(3);
             var averageSeverity = getSeverity(averageTemp);
             //console.log("Average temp: " + averageTemp + " F" + ", Severity: " + averageSeverity + "\n");
             
-            io.emit('temp value', {temp: averageTemp, severity: averageSeverity});
+            printStuff(averageTemp, averageSeverity, 1)
+            //io.emit('temp value', {temp: averageTemp, severity: averageSeverity});
             
             // display LCD stuff: BEGIN
-            setLCDColor(averageSeverity);
-            display.setCursor(0,0);
-            var displayString = "Average temp: " + averageTemp + " F" + ", Severity: " + averageSeverity + "\n"
+            //setLCDColor(averageSeverity);
+            //display.setCursor(0,0);
+            //var displayString = "Average temp: " + averageTemp + " F" + ", Severity: " + averageSeverity + "\n"
             //var displayString = "Temp: " + temperature + " F";
-            console.log(displayString);
-            display.write(displayString);
+           // console.log(displayString);
+            //display.write(displayString);
+            //display.write("Temp: " + averageTemp + " F");
             // display LCD stuff: END
             
             if ((averageSeverity <= 2) && (valveOpen == 1))
@@ -332,15 +350,15 @@ io.on('connection', function(socket) {
     
     
     socket.on('toggle motor', function(msg) {
-        if (testMode == 1)
-        {
-            myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
-            msg.value = motorState;
-            io.emit('toggle motor', msg);
-            motorState = !motorState; //invert the ledState
-        }
-        else 
-        {
+        //if (testMode == 1)
+        //{
+         //   myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
+        //    msg.value = motorState;
+        //    io.emit('toggle motor', msg);
+        //    motorState = !motorState; //invert the ledState
+        //}
+        //else 
+       // {
             // add motor stuff here 
             myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
                
@@ -360,7 +378,7 @@ io.on('connection', function(socket) {
             
             //myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
             motorState = !motorState; //invert the motorState
-        }
+        //}
     });
     
     

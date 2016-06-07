@@ -302,7 +302,7 @@ function tempLoop()
                 {
                     // close the valve
                     //myUln200xa_obj.reverseDirection();
-                    closeValve();
+                    
                     //valveOpen = 0;
                     
                     //msg.value = motorState;
@@ -310,18 +310,21 @@ function tempLoop()
                     myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
                     io.emit('toggle motor', {value: motorState});
                     
+                    closeValve();
                 }
             //if ((averageSeverity == 3) && (valveOpen == 0))
               if ((averageSeverity == 3) && (motorState == false))
                 {
                     // open the valve
                     //myUln200xa_obj.goForward();
-                    openValve();
+                    
                     //valveOpen = 1;
                     
                     motorState = !motorState; //invert the motorState
                     myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
                     io.emit('toggle motor', {value: motorState});
+                    
+                    openValve();
                     
                 }
             
@@ -429,7 +432,12 @@ io.on('connection', function(socket) {
        // {
             // add motor stuff here 
             motorState = !motorState; //invert the motorState
-            
+        
+            myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
+               
+            msg.value = motorState;
+        
+            io.emit('toggle motor', msg);
             if (motorState == false)
                 {
                     // close the valve
@@ -443,11 +451,7 @@ io.on('connection', function(socket) {
                     openValve();
                 }
             
-            myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
-               
-            msg.value = motorState;
-        
-            io.emit('toggle motor', msg);
+            
             //myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
             
         //}

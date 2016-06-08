@@ -68,7 +68,8 @@ var volts = 0;
 var thresholdValue = 0.5;
 var ratio = 1/5;            // used to convert slider values to temp
 //var constant = -28;         // used to convert slider values to temp
-var constant = -55;
+//var constant = -55;
+var constant = -36;
 var firstTemp = true;       // is this the first temperature reading?
 
 var timeOutSeconds = 3000;  // 1000 is 1 second
@@ -92,7 +93,7 @@ var averageTemp = 0;
 var lcd = require('./lcd');
 var display = new lcd.LCD(0);   // 12C socket   
 
-var valveOpen = 0; // state of valve
+//var valveOpen = 0; // state of valve, will be OBE
 
 function printStuff(inTemp, inSeverity, average) {
     // print to console
@@ -108,47 +109,24 @@ function printStuff(inTemp, inSeverity, average) {
     display.setCursor(0,0);
     display.write("Temp: " + inTemp + " F");          
 };
-/*
-function faucetWorks() {
-    
-    // turn LEDLight on board on
-    // change website graphic
-    // turn motor to open valve
-    
-    // change motor state
-    // change valveOpen state
-};
 
-function closeFaucet() {
-    
-};
-*/
 
-/*
-myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
+function valveStuff() {
+    // add motor stuff here 
+    //motorState = !motorState; //invert the motorState
+        
+    myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
                
-            msg.value = motorState;
-            io.emit('toggle motor', msg);
-            
-            if (motorState == 0)
-                {
-                    myUln200xa_obj.reverseDirection();
-                    //myOnboardLed.write()
-                }
-            else // close valve, turn to non-dripping
-                {
-                    myUln200xa_obj.goForward();
-                }
-            
-            
-            //myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
-            motorState = !motorState; //invert the motorState
-        //}
-*/
+    //msg.value = motorState;
+        
+    //io.emit('toggle motor', msg);
+    io.emit('toggle motor', {value: motorState});
+};
 
-// motor stuff
 // go clockwise to open
 var openValve = function() {
+    valveStuff();
+    
     myUln200xa_obj.setSpeed(5); // 5 RPMs
 
 	    myUln200xa_obj.setDirection(Uln200xa_lib.ULN200XA.DIR_CW);
@@ -161,7 +139,10 @@ var openValve = function() {
        // myUln200xa_obj.stepperSteps(1024);  // 1/4 revolution
 };
 
+// go counterclockwise to close
 var closeValve = function() {
+    valveStuff();
+    
     //console.log("Rotating 1/4 revolution counter clockwise.");
         //console.log("Rotating 1 revolution counter clockwise");
         console.log("Closing valve");
@@ -176,42 +157,6 @@ var closeValve = function() {
 
 myUln200xa_obj.goForward = openValve;
 myUln200xa_obj.reverseDirection  = closeValve;
-
-/*
-	myUln200xa_obj.goForward = function()
-
-	{
-
-	    myUln200xa_obj.setSpeed(5); // 5 RPMs
-
-	    myUln200xa_obj.setDirection(Uln200xa_lib.ULN200XA.DIR_CW);
-
-	    //console.log("Rotating 1 revolution clockwise.");
-        console.log("Opening valve");
-
-	    //myUln200xa_obj.stepperSteps(4096);
-        myUln200xa_obj.stepperSteps(3072);  // 3/4 revolution
-       // myUln200xa_obj.stepperSteps(1024);  // 1/4 revolution
-	};
-	 
-// motor stuff
-    // go counterclockwise to close
-	myUln200xa_obj.reverseDirection = function()
-
-	{
-
-	    //console.log("Rotating 1/4 revolution counter clockwise.");
-        //console.log("Rotating 1 revolution counter clockwise");
-        console.log("Closing valve");
-
-	    myUln200xa_obj.setDirection(Uln200xa_lib.ULN200XA.DIR_CCW);
-
-	    //myUln200xa_obj.stepperSteps(2048);
-        //myUln200xa_obj.stepperSteps(1024);
-        //myUln200xa_obj.stepperSteps(4096);  
-        myUln200xa_obj.stepperSteps(3200); // 3/4 +
-	};
-*/
 
 // Run ULN200xa driven stepper
 	//myUln200xa_obj.goForward();    // open the valve
@@ -236,8 +181,7 @@ function setLCDColor(inSeverity)
     {
         red = 192;
         green = 192;
-        blue = 0;
-        
+        blue = 0; 
     }
     
     display.setColor(red, green, blue);
@@ -274,9 +218,6 @@ function tempLoop()
         //console.log("Temp: " + temp + ", totalTemp: " + totalTemp + "\n");
         if (averageCounter == averageItemCount)
         {
-            //write the slider values to the console
-            //console.log("Slider Value: " + rawSlider + " = " + volts.toFixed(2) + " V");  
-            //console.log("Current temp: " + temp + " F" + ", Severity: " + getSeverity(temp));
             averageVolts = (totalVolts/averageItemCount);
             averageSlider = (totalSlider/averageItemCount);
             averageTemp = (totalTemp/averageItemCount).toPrecision(3);
@@ -284,19 +225,7 @@ function tempLoop()
             //console.log("Average temp: " + averageTemp + " F" + ", Severity: " + averageSeverity + "\n");
             
             printStuff(averageTemp, averageSeverity, 1)
-            //io.emit('temp value', {temp: averageTemp, severity: averageSeverity});
             
-            // display LCD stuff: BEGIN
-            //setLCDColor(averageSeverity);
-            //display.setCursor(0,0);
-            //var displayString = "Average temp: " + averageTemp + " F" + ", Severity: " + averageSeverity + "\n"
-            //var displayString = "Temp: " + temperature + " F";
-           // console.log(displayString);
-            //display.write(displayString);
-            //display.write("Temp: " + averageTemp + " F");
-            // display LCD stuff: END
-            
-            //if ((averageSeverity <= 2) && (valveOpen == 1))
             // valve is OPEN
             if ((averageSeverity <= 2) && (motorState == true))
                 {
@@ -307,12 +236,13 @@ function tempLoop()
                     
                     //msg.value = motorState;
                     motorState = !motorState; //invert the motorState
-                    myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
-                    io.emit('toggle motor', {value: motorState});
+                   // myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
+                   // io.emit('toggle motor', {value: motorState});
                     
                     closeValve();
                 }
             //if ((averageSeverity == 3) && (valveOpen == 0))
+            // valve is closed
               if ((averageSeverity == 3) && (motorState == false))
                 {
                     // open the valve
@@ -321,8 +251,8 @@ function tempLoop()
                     //valveOpen = 1;
                     
                     motorState = !motorState; //invert the motorState
-                    myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
-                    io.emit('toggle motor', {value: motorState});
+                   // myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
+                   // io.emit('toggle motor', {value: motorState});
                     
                     openValve();
                     
@@ -426,18 +356,11 @@ io.on('connection', function(socket) {
          //   myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
         //    msg.value = motorState;
         //    io.emit('toggle motor', msg);
-        //    motorState = !motorState; //invert the ledState
+            motorState = !motorState; //invert the ledState
         //}
         //else 
        // {
-            // add motor stuff here 
-            motorState = !motorState; //invert the motorState
-        
-            myOnboardLed.write(motorState?1:0); //if motorState is true then write a '1' (high) otherwise write a '0' (low)
-               
-            msg.value = motorState;
-        
-            io.emit('toggle motor', msg);
+            
             if (motorState == false)
                 {
                     // close the valve
